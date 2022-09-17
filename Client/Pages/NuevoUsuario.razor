@@ -1,0 +1,61 @@
+﻿@page "/usuario/nuevo"
+@page "/usuario/editar/{id:int}"
+@using CRUD_Blazor.Shared;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+
+<h1>@titulo Usuario</h1>
+<EditForm Model="@usuario" OnValidSubmit="GuardarUsuario">
+    <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <input @bind="usuario.Nombre" type="text" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Apellido</label>
+        <input @bind="usuario.Apellido" type="text" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input @bind="usuario.Email" type="email" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Telefono</label>
+        <input @bind="usuario.Telefono" type="text" class="form-control" required>
+    </div><div class="mb-3">
+        <label class="form-label">Fecha Baja</label>
+        <input @bind="usuario.FechaBaja" type="datetime" class="form-control" required>
+    </div>
+    <button @*@onclick="GuardarUsuario"*@ class="btn btn-primary mt-3">Crear Usuario</button>
+    <button @onclick="Cancel" class="btn btn-primary mt-3">Cancelar</button>
+</EditForm>
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    protected string titulo = "Nuevo";
+    protected Usuario usuario = new();
+
+
+    protected override async Task OnParametersSetAsync(){
+        if(Id != 0){
+            titulo = "Editar";
+            usuario = await Http.GetFromJsonAsync<Usuario>("api/Usuario/" + Id.ToString());
+        }
+    }
+
+    protected async Task GuardarUsuario(){
+        if(usuario.Id != 0)
+        {
+            await Http.PutAsJsonAsync("api/Usuario", usuario);
+        }else{
+            await Http.PostAsJsonAsync("api/Usuario", usuario);
+        }
+        Cancel();
+    }
+
+    public void Cancel(){
+
+        NavigationManager.NavigateTo("/");
+    }
+}

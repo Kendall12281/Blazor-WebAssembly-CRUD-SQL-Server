@@ -1,0 +1,57 @@
+﻿@page "/fetchdata"
+@using CRUD_Blazor.Shared
+@inject HttpClient Http
+
+<PageTitle>Weather forecast</PageTitle>
+
+<h1>Usuarios SQL</h1>
+
+
+@if (lista == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+         <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellido</th>
+                <th scope="col">Email</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Fecha de Alta</th>
+                <th scope="col">Fecha de de Baja</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usuario in lista)
+            {
+                <tr scope="row">
+                    <td>@usuario.Nombre</td>
+                    <td>@usuario.Apellido</td>
+                    <td>@usuario.Email</td>
+                    <td>@usuario.Telefono</td>
+                    <td>@usuario.FechaAlta</td>
+                    <td>@usuario.FechaBaja</td>
+                        <td>
+                            <a href="/usuario/editar/@usuario.Id" role="button" class="btn btn-secondary">Editar</a>
+                        </td>
+                        <td>
+                        <a href="usuario/borrar/@usuario.Id" role="button" class="btn btn-danger">Borrar</a>
+                        </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@code {
+    private List<Usuario> lista;
+
+    protected override async Task OnInitializedAsync()
+    {
+        lista = await Http.GetFromJsonAsync<List<Usuario>>("api/Usuario");
+    }
+}

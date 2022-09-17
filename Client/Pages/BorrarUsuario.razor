@@ -1,0 +1,46 @@
+﻿@page "/usuario/borrar/{Id:int}"
+@using CRUD_Blazor.Shared
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+
+<h3>BorrarUsuario</h3>
+<div class="mb-3">
+    <label class="form-label">Nombre</label>
+    <input @bind="usuario.Nombre" type="text" class="form-control" required>
+</div>
+<div class="mb-3">
+    <label class="form-label">Apellido</label>
+    <input @bind="usuario.Apellido" type="text" class="form-control" required>
+</div>
+<div class="mb-3">
+    <label class="form-label">Email</label>
+    <input @bind="usuario.Email" type="email" class="form-control" required>
+</div>
+<div class="mb-3">
+    <label class="form-label">Telefono</label>
+    <input @bind="usuario.Telefono" type="text" class="form-control" required>
+</div>
+<div class="mb-3">
+    <label class="form-label">Fecha Baja</label>
+    <input @bind="usuario.FechaBaja" type="datetime" class="form-control" required>
+</div>
+<button @onclick="Borrar"  class="btn btn-danger mt-3">Borrar</button>
+<button @onclick="Cancel" class="btn btn-primary mt-3">Cancelar</button>
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    protected Usuario usuario = new();
+    protected override async Task OnParametersSetAsync()
+    {
+        usuario = await Http.GetFromJsonAsync<Usuario>("api/Usuario/" + Id.ToString());
+    }
+
+    private async void Borrar(){
+        await Http.DeleteAsync("api/Usuario/" + Id.ToString());
+        Cancel();
+    }
+
+    private void Cancel(){
+        NavigationManager.NavigateTo("/");
+    }
+}
